@@ -1,0 +1,36 @@
+! ===================== SERIES CONNECTION BETWEEN TWO PZT LAYERS =====================
+
+! ----------- TOP Electrode of Positive (1st) PZT Layer [Voltage Output Terminal] -----------
+nsel,s,loc,z,0.36e-3
+nsel,r,loc,x,0,10e-3
+nsel,r,loc,y,-49e-3,-10e-3
+cp,1,volt,all
+*get,n_top,node,0,num,min     ! Node where output voltage will be measured
+
+! ----------- Interface between Positive PZT bottom and Negative PZT top (NO CP) -----------
+nsel,s,loc,z,0.12e-3
+nsel,r,loc,x,0,10e-3
+nsel,r,loc,y,-49e-3,-10e-3
+*get,n_mid,node,0,num,min     ! This is the shared internal electrode (electrical junction)
+
+! ----------- BOTTOM Electrode of Negative (2nd) PZT Layer [Ground Terminal] -----------
+nsel,s,loc,z,0
+nsel,r,loc,x,0,10e-3
+nsel,r,loc,y,-49e-3,-10e-3
+cp,2,volt,all
+*get,n_bottom,node,0,num,min  ! Node to be grounded
+
+! ----------- REMOVE THE OUTER SURFACE OF 2nd PZT TOP (to avoid floating voltages) -----------
+! Optional step to ensure Z = -0.24e-3 (top of 2nd PZT layer) is not involved in voltage cp
+nsel,s,loc,z,-0.24e-3
+nsel,r,loc,x,0,10e-3
+nsel,r,loc,y,-49e-3,-10e-3
+cpdel,all                     ! Delete any unintended voltage coupling on this surface
+
+! ----------- Apply Electrical Ground at Bottom Electrode -----------
+d,n_bottom,volt,0
+
+! ----------- Create Coupled Field Elements for Electrical Series Connection -----------
+type,3      ! Circuit element (e.g., CIRCU94 or TRANS126)
+e,n_top,n_mid       ! Connect top of positive PZT to interface node
+e,n_mid,n_bottom    ! Connect interface to bottom of negative PZT (grounded)

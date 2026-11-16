@@ -1,0 +1,17 @@
+! Material 1 - Substructure Material
+MPTEMP,,,,,,,,
+MPTEMP,1,0
+MPDATA,EX,1,,201e9
+MPDATA,PRXY,1,,0.3
+MPTEMP,,,,,,,,
+MPTEMP,1,0
+MPDATA,DENS,1,,7850
+
+! Material 2 - New Material
+MPTEMP,,,,,,,,
+MPTEMP,1,0
+MPDATA,EX,2,,6.3e10
+MPDATA,PRXY,2,,0.31
+MPTEMP,,,,,,,,
+MPTEMP,1,0
+MPDATA,DENS,2,,7500

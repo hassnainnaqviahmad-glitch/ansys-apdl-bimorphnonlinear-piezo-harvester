@@ -1,0 +1,159 @@
+/PREP7  
+
+!Element Type Selection
+
+et,1,solid226,0 ! element 3D structural
+keyopt,1,1,1001
+et,2,solid186
+allsel
+
+!Drawing the volumes
+
+K,1,0,0,0,  
+K,2,0,0,0.5e-3
+K,3,100e-3,0,0.5e-3  
+K,4,100e-3,0,0
+K,5,0,0,0.9e-3
+K,6,100e-3,0,0.9e-3  
+LSTR,       1,       2  
+LSTR,       2,       3  
+LSTR,       3,       4  
+LSTR,       4,       1  
+LSTR,       2,       5  
+LSTR,       5,       6  
+LSTR,       6,       3  
+/REP,FAST   
+FLST,2,4,4  
+FITEM,2,1   
+FITEM,2,2   
+FITEM,2,3   
+FITEM,2,4   
+AL,P51X 
+FLST,2,4,4  
+FITEM,2,2   
+FITEM,2,5   
+FITEM,2,6   
+FITEM,2,7   
+AL,P51X 
+/PREP7  
+
+!Bond volumes together
+
+VOFFST,1,20e-3, ,  
+VOFFST,2,-20e-3, ,
+BTOL,1e-6 !precision 
+vsel,all
+vGLUE,all 
+/OUTPUT, TERM   
+/AUTO,1 
+/REP,FAST   
+
+!Piezoelectric material properties 
+
+/com    PZT-5H Material Definition: Z-Polarized
+
+/com    Stiffness Matrix for PZT-5H
+TB, ANEL, 1, 1, 0  ! Start defining anisotropic elasticity properties
+TBDATA, 1, 1.51E+11, 9.8E+10, 9.6E+10  ! c11, c12, c13
+TBDATA, 7, 1.51E+11, 9.6E+10           ! c12, c13 (second row continuation)
+TBDATA, 12, 1.24E+11                   ! c33 (third row)
+TBDATA, 16, 2.3E+10                    ! c44 (fourth row)
+TBDATA, 19, 2.3E+10                    ! c44 (fifth row)
+TBDATA, 21, 2.65E+10                   ! c66 (sixth row)				
+						
+/com	Piezo matrix					
+TB,	PIEZ,	1				
+TBDATA,	3,	-275				
+TBDATA,	6,	-275				
+TBDATA,	9,	620				
+TBDATA,	14,	741				
+TBDATA,	16,	741				
+						
+/com	Permittivity					
+EMUNIT,	EPZRO,	8.85E-12				
+MP,	PERX,	1	,	1694.92		
+MP,	PERY,	1	,	1694.92		
+MP,	PERZ,	1	,	1499.44		
+/com	Density					
+MP,	DENS,	1	,	7500		
+
+!Substructure material properties 
+
+MPTEMP,,,,,,,,  
+MPTEMP,1,0  
+MPDATA,EX,2,,100e9  
+MPDATA,PRXY,2,,0.3  
+MPTEMP,,,,,,,,  
+MPTEMP,1,0  
+MPDATA,DENS,2,,7165 
+
+!Defining material types and element types to volumes
+
+VSEL, , , ,       1 
+VATT,       2, ,   2,       0   
+VSEL,ALL
+
+VSEL, , , ,       3 
+VATT,       1, ,   1,       0   
+VSEL,ALL
+
+
+!Meshing
+
+vmesh,all 
+allsel
+finish 
+
+!Coupling nodes
+
+/PREP7
+NSEL,S,LOC,z,0.5e-3
+cp,1,volt,all ! component n°1 ground
+*get,n_ground,node,0,num,min
+allsel
+NSEL,S,LOC,z,0.9e-3
+cp,3,volt,all ! component n°2 top
+*get,n_supply,node,0,num,min
+allsel 
+allsel,all
+
+!Defining ground 0 Voltage
+
+d,n_ground,volt,0 ! Apply 0 voltage to the ground electrode
+
+!Defining resistive element
+
+ET,3,CIRCU94,0    	!SET UP RESISTOR
+R,1,100000  	  	!RESISTANCE VALUE
+TYPE,3  	  	!SET ELEMENT TYPE
+E,n_ground,n_supply     !CREATE RESISTOR BETWEEN NODES 1 AND 2
+ALLSEL
+FINISH
+/SOLU 
+
+!Defining boundary conditions
+
+asel,s,loc,x,0
+DA,all,UX,0   
+DA,all,UY,0 
+DA,all,UZ,0  
+DA,all,UZ,1  
+asel,all
+vsel,all
+
+!Defining solution options
+
+/SOL 
+ANTYPE,3
+HROPT,FULL  
+HROUT,ON
+LUMPM,0  
+EQSLV, ,0,  
+PSTRES,0
+HARFRQ,0,1000,  
+NSUBST,100,  
+KBC,0    
+
+
+
+

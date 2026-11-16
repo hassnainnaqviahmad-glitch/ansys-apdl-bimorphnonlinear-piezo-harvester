@@ -1,0 +1,17 @@
+# ANSYS Solver & Temporary Scratch Files
+*.rst
+*.rth
+*.rmg
+*.full
+*.esav
+*.emat
+*.mntr
+*.page
+*.lock
+*.err
+*.log
+*.out
+*.stat
+*.rdb
+*.ldhi
+file.*

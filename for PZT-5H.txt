@@ -1,0 +1,25 @@
+for PZT-5H
+the Stiffness matrix (6*6) is given in form:
+c=[c11 c12 c13 0 0 0;
+   c12 c11 c13 0 0 0;
+   c13 c13 c33 0 0 0;
+   0   0   0 c44 0 0;
+   0   0   0 0 c44 0;
+   0   0   0 0  0  c66;]
+
+here:
+c11= 151e11
+c12= 9.8e10
+c13=9.6e10
+c33=1.24e11
+c44=2.3e10
+c66=2.65e10
+
+
+
+
+
+
+
+
+
